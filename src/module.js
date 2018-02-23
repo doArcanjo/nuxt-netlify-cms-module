@@ -30,7 +30,7 @@ export default function NetlifyCmsModule(moduleOptions) {
   const config = configManager.config;
 
   // This will be called once when builder started
-  this.nuxt.plugin("build", builder => {
+  this.nuxt.hook("build", builder => {
     // This will be run just before webpack compiler starts
     builder.plugin("compile", ({ builder, compiler }) => {
       const webpackConfig = getWebpackNetlifyConfig(
@@ -108,7 +108,7 @@ export default function NetlifyCmsModule(moduleOptions) {
         }
 
         // Stop webpack middleware on nuxt.close()
-        this.nuxt.plugin("close", async () => {
+        this.nuxt.hook("close", async () => {
           await this.nuxt.renderer.netlifyWebpackDevMiddleware.close();
         });
       }
@@ -157,7 +157,7 @@ export default function NetlifyCmsModule(moduleOptions) {
     this.nuxt.renderer.netlifyFileWatcher = fileWatcher;
 
     // Stop watching on nuxt.close()
-    this.nuxt.plugin("close", () => {
+    this.nuxt.hook("close", () => {
       this.nuxt.renderer.netlifyFileWatcher.close();
     });
   } else {
@@ -171,7 +171,7 @@ export default function NetlifyCmsModule(moduleOptions) {
   }
 
   // Move cms folder from `dist/_nuxt` folder to `dist/` after nuxt generate
-  this.nuxt.plugin("generator", generator => {
+  this.nuxt.hook("generator", generator => {
     generator.plugin("generate", async () => {
       await move(
         join(generator.distNuxtPath, config.adminPath).replace(/\/$/, ""),
